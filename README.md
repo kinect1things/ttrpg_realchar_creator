@@ -1,6 +1,8 @@
 # Real Character Creator
 
-What would your **real-life** stats be? 10 is human average. 18 is genius or Olympian.
+What would your **real-life** stats be? 10 is human average. 18 is genius or Olympian —
+and capped out of reach, because no real human gets an 18. The best you can prove
+with a web quiz is a 17.
 
 Answer ~18 simple questions about actual real-life things — how much you can lift over
 your head, whether you can catch keys tossed at you, how you arrive at the top of four

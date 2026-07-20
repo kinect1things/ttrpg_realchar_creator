@@ -6,6 +6,10 @@
 
 const ABILITIES = ["str", "dex", "con", "int", "wis", "cha"];
 
+// House rule: no real human gets an 18. The scale goes to 18; you don't.
+// Anyone whose answers average higher is capped and told so.
+const ABILITY_CAP = 17;
+
 const ABILITY_NAMES = {
   str: "Strength",
   dex: "Dexterity",
@@ -563,8 +567,8 @@ const SYSTEMS = {
           ["Save vs. Spell", sv[4]],
           ["Class Legality", legality],
       ];
-      if (a.str === 18 && isWarrior) {
-        extras2e.splice(5, 0, ["Exceptional Strength", "Roll d100 and start bragging"]);
+      if (a.str >= 17 && isWarrior) {
+        extras2e.splice(5, 0, ["Exceptional Strength", "One more point and you'd roll the d100. It haunts you."]);
       }
       return {
         mods: null, // 2e has no universal modifier; the tables ARE the character
