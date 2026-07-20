@@ -350,5 +350,10 @@
     }
   }
 
+  const versionEl = document.getElementById("app-version");
+  if (versionEl && typeof APP_VERSION !== "undefined") {
+    versionEl.textContent = "v" + APP_VERSION;
+  }
+
   render();
 })();

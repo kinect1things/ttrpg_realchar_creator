@@ -28,6 +28,26 @@ It's a static site — no build step, no dependencies.
 ## Structure
 
 - `index.html` — page shell
-- `css/style.css` — dark tavern theme + parchment sheet + print styles
+- `css/style.css` — dark UI theme + white sheet + print styles
+- `js/version.js` — the app version (semver, single source of truth)
 - `js/data.js` — question bank, 2e ability tables, system definitions (add a system here)
 - `js/app.js` — quiz flow, scoring, sheet rendering
+- `test/validate.js` — data-integrity checks run by CI (`node test/validate.js`)
+- `.claude/agents/` — consultable experts: `player-expert`, `game-master-expert`, `security-expert`
+
+## Development workflow
+
+Versioned, CI-gated, deployed from `main`:
+
+1. Branch from `main` (`feature/...` or `release/...`) and make your changes.
+2. Bump `APP_VERSION` in `js/version.js` (semver) — CI fails the PR if app files
+   changed without a version bump.
+3. Open a PR to `main`. CI syntax-checks all scripts and runs `test/validate.js`.
+4. Merge. The Deploy workflow validates again, publishes to GitHub Pages, and
+   tags a `vX.Y.Z` release automatically if that version tag doesn't exist yet.
+
+When making changes, consult the resident experts (Claude Code agents):
+the **player expert** for question/scoring/rules-accuracy feedback, the
+**game master expert** for table-runnability and tone, and the
+**security expert** before releases and for anything touching user input or
+the workflows.

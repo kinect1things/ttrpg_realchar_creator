@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Syntax-check all scripts
+        run: |
+          for f in js/*.js test/*.js; do
+            node --check "$f"
+          done
+
+      - name: Data-integrity tests
+        run: node test/validate.js
+
+      - name: Require version bump when app files change
+        run: |
+          git fetch origin "${{ github.base_ref }}" --depth=1
+          if ! git diff --quiet "origin/${{ github.base_ref }}" -- index.html css js ':(exclude)js/version.js'; then
+            if git diff --quiet "origin/${{ github.base_ref }}" -- js/version.js; then
+              echo "::error file=js/version.js::App files changed but APP_VERSION was not bumped. Bump the semver in js/version.js."
+              exit 1
+            fi
+          fi
+          echo "Version check OK."
