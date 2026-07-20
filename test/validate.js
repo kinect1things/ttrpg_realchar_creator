@@ -127,6 +127,22 @@ for (const [sysId, sys] of Object.entries(SYSTEMS)) {
   }
 }
 
+// ----- score reachability: the app's promises must be mathematically true -----
+// "18 is genius or Olympian" — someone who maxes every answer must get an 18.
+for (const ab of ABILITIES) {
+  const qs = QUESTIONS.filter((q) => q.type === "ability" && q.ability === ab);
+  const maxAvg = qs.reduce((s, q) => s + Math.max(...q.options.map((o) => o.score)), 0) / qs.length;
+  check(
+    Math.round(maxAvg) >= 18,
+    `ability ${ab}: all-max answers average ${maxAvg.toFixed(2)} — an 18 is unreachable`
+  );
+  const minAvg = qs.reduce((s, q) => s + Math.min(...q.options.map((o) => o.score)), 0) / qs.length;
+  check(
+    Math.round(minAvg) <= 6,
+    `ability ${ab}: all-min answers average ${minAvg.toFixed(2)} — low-stat feats are unreachable`
+  );
+}
+
 // ----- feats -----
 const featNames = new Set();
 for (const f of FEATS) {

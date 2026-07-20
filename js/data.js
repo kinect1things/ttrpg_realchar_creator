@@ -59,8 +59,8 @@ const CON_TABLE_2E = [
   { min: 14, max: 14, hp: 0,  shock: 88 },
   { min: 15, max: 15, hp: 1,  shock: 90 },
   { min: 16, max: 16, hp: 2,  shock: 95 },
-  { min: 17, max: 17, hp: 2,  shock: 97 },
-  { min: 18, max: 18, hp: 2,  shock: 99 },
+  { min: 17, max: 17, hp: 2,  hpWarrior: 3, shock: 97 },
+  { min: 18, max: 18, hp: 2,  hpWarrior: 4, shock: 99 },
 ];
 
 function tableRow(table, score) {
@@ -84,6 +84,7 @@ const QUESTIONS = [
       { label: "A bag of concrete (~50 lbs)", score: 7 },
       { label: "A very heavy suitcase (~90 lbs)", score: 9 },
       { label: "Around 115 lbs — a whole other small person, briefly", score: 10 },
+      { label: "~140 lbs — a loaded barbell, one determined heave", score: 12 },
       { label: "A full keg (~160 lbs)", score: 14 },
       { label: "200+ lbs — I own a squat rack and use it", score: 16 },
       { label: "255+ lbs — I compete, or should", score: 18 },
@@ -100,7 +101,8 @@ const QUESTIONS = [
       { label: "6–15", score: 9 },
       { label: "16–30", score: 11 },
       { label: "31–50", score: 13 },
-      { label: "More than 50", score: 16 },
+      { label: "More than 50", score: 15 },
+      { label: "More than 50, some of them one-armed, for content", score: 18 },
     ],
   },
   {
@@ -113,6 +115,7 @@ const QUESTIONS = [
       { label: "Two trips, like a reasonable person", score: 9 },
       { label: "One trip, fingers turning purple", score: 12 },
       { label: "One trip, water jugs included. I am the forklift.", score: 15 },
+      { label: "One trip, and I bring the neighbor's groceries in too", score: 17 },
     ],
   },
 
@@ -128,6 +131,7 @@ const QUESTIONS = [
       { label: "Caught, two hands, slightly panicked", score: 10 },
       { label: "Caught one-handed like it's nothing", score: 13 },
       { label: "Caught without looking up from my phone", score: 16 },
+      { label: "Caught behind my back. I've been waiting for this.", score: 18 },
     ],
   },
   {
@@ -140,6 +144,7 @@ const QUESTIONS = [
       { label: "A few wobbly seconds", score: 8 },
       { label: "10–20 seconds, no problem", score: 11 },
       { label: "As long as I want — I do yoga / skate / climb", score: 14 },
+      { label: "Indefinitely, possibly on a slackline", score: 17 },
     ],
   },
 
@@ -154,6 +159,7 @@ const QUESTIONS = [
       { label: "Winded, but pretending I'm not", score: 8 },
       { label: "Fine. Slightly warm.", score: 11 },
       { label: "I take stairs two at a time, for fun", score: 14 },
+      { label: "I run stairs for cardio, voluntarily", score: 17 },
     ],
   },
   {
@@ -165,7 +171,8 @@ const QUESTIONS = [
       { label: "I catch everything. I'm sick right now.", score: 5 },
       { label: "A few times a year", score: 9 },
       { label: "Rarely — one cold a year, maybe", score: 12 },
-      { label: "Illness fears me", score: 15 },
+      { label: "Almost never, and it's over in a day", score: 15 },
+      { label: "Illness fears me", score: 18 },
     ],
   },
 
@@ -176,10 +183,12 @@ const QUESTIONS = [
     ability: "int",
     text: "A new board game hits the table. Who reads the rules?",
     options: [
+      { label: "I move my piece when someone points at me", score: 5 },
       { label: "I wait for someone to just tell me when it's my turn", score: 7 },
       { label: "I skim and figure it out as we go", score: 10 },
-      { label: "I read them, I explain them. I am the rules.", score: 13 },
-      { label: "I've already watched three strategy videos", score: 15 },
+      { label: "I've already watched three strategy videos", score: 12 },
+      { label: "I read them, I explain them. I am the rules.", score: 15 },
+      { label: "I've submitted errata, and been thanked", score: 17 },
     ],
   },
   {
@@ -191,7 +200,8 @@ const QUESTIONS = [
       { label: "Is there for the snacks", score: 7 },
       { label: "Gets a few in my specialty", score: 10 },
       { label: "Carries a category or two", score: 13 },
-      { label: "Is the reason the team got banned", score: 16 },
+      { label: "Carries most categories, quietly", score: 15 },
+      { label: "Is the reason the team got banned", score: 18 },
     ],
   },
 
@@ -206,6 +216,7 @@ const QUESTIONS = [
       { label: "It's a weekly ritual", score: 7 },
       { label: "Occasionally, briefly", score: 10 },
       { label: "Never. Everything has a place.", score: 14 },
+      { label: "Never, and I know where YOUR keys are too", score: 17 },
     ],
   },
   {
@@ -218,6 +229,7 @@ const QUESTIONS = [
       { label: "Sometimes, mostly to vent", score: 9 },
       { label: "Often — I give solid advice", score: 13 },
       { label: "I am the group's unpaid therapist", score: 15 },
+      { label: "Strangers on public transit tell me their life story, then thank me", score: 18 },
     ],
   },
 
@@ -230,8 +242,10 @@ const QUESTIONS = [
     options: [
       { label: "Also leave. Immediately.", score: 6 },
       { label: "Guard the snack table and check my phone", score: 8 },
+      { label: "Talk to whoever ends up next to me at the snack table", score: 10 },
       { label: "Find a conversation and slide in", score: 12 },
       { label: "Know everyone's name by the end of the night", score: 16 },
+      { label: "It's my party now. The host is taking notes.", score: 18 },
     ],
   },
   {
@@ -244,6 +258,7 @@ const QUESTIONS = [
       { label: "I'd try, apologizing the entire time", score: 9 },
       { label: "Usually, politely", score: 12 },
       { label: "I once got the refund AND a coupon", score: 15 },
+      { label: "The manager apologized to ME. We're friends now.", score: 17 },
     ],
   },
 
@@ -361,7 +376,7 @@ const FEATS = [
   {
     name: "Two-Trip Rule",
     when: (a) => a.str <= 6,
-    desc: "You may not carry more than one grocery bag, but you complain with advantage.",
+    desc: "You may not carry more than one grocery bag, but you have advantage on Charisma (Performance) checks made to complain about it.",
   },
   {
     name: "Catlike Reflexes",
@@ -391,7 +406,12 @@ const FEATS = [
   {
     name: "Unpaid Therapist",
     when: (a) => a.wis >= 14,
-    desc: "Allies within 30 feet may dump their problems on you as a bonus action.",
+    desc: "Allies within 30 feet may dump their problems on you as a bonus action; the ally gains 1 temporary HP. You sigh.",
+  },
+  {
+    name: "Saw It in a Movie Once",
+    when: (a) => a.int <= 6,
+    desc: "Once per day, state a confident fact. Roll a d20: on 11 or higher, it is somehow true.",
   },
   {
     name: "Where Are My Keys?",
@@ -406,13 +426,13 @@ const FEATS = [
   {
     name: "Resting Menace",
     when: (a) => a.cha <= 6,
-    desc: "Strangers assume you are mad at them. You are not. Probably.",
+    desc: "Strangers assume you are mad at them. You are not. Probably. Disadvantage on first-impression Charisma checks; advantage on Intimidation against strangers.",
   },
 ];
 
 const FALLBACK_FEAT = {
   name: "Aggressively Average",
-  desc: "Once per day you may reroll any check. The result will also be average.",
+  desc: "Once per day, reroll any d20. The new result is a 10.",
 };
 
 // ---------------------------------------------------------------------------
@@ -427,6 +447,34 @@ function fmtMod(n) {
   return (n >= 0 ? "+" : "") + n;
 }
 
+// AD&D 2e PHB Table 60: level-1 saving throws by class group.
+// Order: Paralyzation/Poison/Death, Rod/Staff/Wand, Petrification/Polymorph,
+// Breath Weapon, Spell. Roll d20, meet or beat.
+const SAVES_2E = {
+  fighter: [14, 16, 15, 17, 17], ranger: [14, 16, 15, 17, 17], // warrior group
+  wizard:  [14, 11, 13, 15, 12],                                // wizard group
+  cleric:  [10, 14, 13, 16, 15],                                // priest group
+  rogue:   [13, 14, 12, 16, 15], bard: [13, 14, 12, 16, 15],    // rogue group
+};
+
+// AD&D 2e class ability minimums (PHB) — for the class-legality footnote.
+const REQS_2E = {
+  fighter: { str: 9 },
+  ranger:  { str: 13, dex: 13, con: 14, wis: 14 },
+  wizard:  { int: 9 },
+  cleric:  { wis: 9 },
+  rogue:   { dex: 9 },
+  bard:    { dex: 12, int: 13, cha: 15 },
+};
+
+// PF2e level-1 proficiencies (CRB): T = trained (+3), E = expert (+5).
+const PF2E_PROF = { T: 3, E: 5 };
+const PF2E_SAVES = { // [Fortitude, Reflex, Will]
+  fighter: ["E", "E", "T"], ranger: ["E", "E", "T"], rogue: ["T", "E", "E"],
+  bard: ["T", "T", "E"], wizard: ["T", "T", "E"], cleric: ["T", "T", "E"],
+};
+const PF2E_PERCEPTION = { fighter: "E", ranger: "E", rogue: "E", bard: "E", wizard: "T", cleric: "T" };
+
 const SYSTEMS = {
   dnd5e: {
     name: "D&D 5th Edition",
@@ -437,21 +485,32 @@ const SYSTEMS = {
       bard: "Bard", rogue: "Rogue", ranger: "Ranger",
     },
     hitDie: { fighter: 10, wizard: 6, cleric: 8, bard: 8, rogue: 8, ranger: 10 },
-    saves: {
-      fighter: ["Str", "Con"], wizard: ["Int", "Wis"], cleric: ["Wis", "Cha"],
-      bard: ["Dex", "Cha"], rogue: ["Dex", "Int"], ranger: ["Str", "Dex"],
+    saveProfs: {
+      fighter: ["str", "con"], wizard: ["int", "wis"], cleric: ["wis", "cha"],
+      bard: ["dex", "cha"], rogue: ["dex", "int"], ranger: ["str", "dex"],
     },
+    skillsNote: "Proficient (+2 + ability mod) when one of these plausibly applies. GM's call.",
+    featsTitle: "Feats",
     derive(a, archetype) {
       const con = mod5e(a.con);
-      const hp = Math.max(1, this.hitDie[archetype] + con);
+      const str = mod5e(a.str);
+      const profs = this.saveProfs[archetype];
+      const saves = ABILITIES.map((ab) => {
+        const p = profs.includes(ab);
+        return ABILITY_NAMES[ab].slice(0, 3) + " " + fmtMod(mod5e(a[ab]) + (p ? 2 : 0)) + (p ? "*" : "");
+      }).join(", ");
       return {
         mods: Object.fromEntries(ABILITIES.map((k) => [k, fmtMod(mod5e(a[k]))])),
-        hp,
+        hp: Math.max(1, this.hitDie[archetype] + con),
+        hpNote: "max hit die at level 1",
         ac: 10 + mod5e(a.dex),
         acNote: "unarmored",
+        weapons: "Fists (" + Math.max(0, 1 + str) + " bludgeoning, nonlethal" + (1 + str <= 0 ? " — a stern pat" : "") + ")",
         extras: [
+          ["Initiative", fmtMod(mod5e(a.dex))],
+          ["Unarmed Strike", fmtMod(2 + str) + " to hit, " + Math.max(0, 1 + str) + " bludgeoning" + (1 + str <= 0 ? " (a harmless slap)" : "")],
           ["Proficiency Bonus", "+2"],
-          ["Saving Throws", this.saves[archetype].join(", ")],
+          ["Saving Throws", saves + "  (* proficient)"],
           ["Carrying Capacity", (a.str * 15) + " lbs (Str × 15)"],
           ["Speed", "30 ft (25 ft before coffee)"],
         ],
@@ -468,25 +527,53 @@ const SYSTEMS = {
       bard: "Bard", rogue: "Thief", ranger: "Ranger",
     },
     hitDie: { fighter: 10, wizard: 4, cleric: 8, bard: 6, rogue: 6, ranger: 10 },
+    skillsNote: "Nonweapon proficiencies: roll d20 equal-or-under the relevant ability.",
+    featsTitle: "Special Abilities (self-reported)",
+    featNote: "Translation for 2e: advantage/disadvantage = +4/−4; bonus action = free action; a \"save\" = the appropriate saving throw above.",
     derive(a, archetype) {
       const str = tableRow(STR_TABLE_2E, a.str);
       const dex = tableRow(DEX_TABLE_2E, a.dex);
       const con = tableRow(CON_TABLE_2E, a.con);
+      const isWarrior = archetype === "fighter" || archetype === "ranger";
+      const conHp = isWarrior && con.hpWarrior != null ? con.hpWarrior : con.hp;
       const avgHp = Math.ceil((this.hitDie[archetype] + 1) / 2);
-      return {
-        mods: null, // 2e has no universal modifier; the tables ARE the character
-        hp: Math.max(1, avgHp + con.hp),
-        ac: 10 + dex.def,
-        acNote: "descending — lower is better",
-        extras: [
+      const sv = SAVES_2E[archetype];
+      // Class-legality footnote: 2e classes have ability minimums.
+      const unmet = Object.entries(REQS_2E[archetype] || {})
+        .filter(([ab, min]) => a[ab] < min)
+        .map(([ab, min]) => ABILITY_NAMES[ab].slice(0, 3) + " " + min);
+      const legality = unmet.length
+        ? "The 2e class police note you need " + unmet.join(", ") + " for this class. You are one anyway. Don't tell them."
+        : "You genuinely qualify for this class. The 2e class police salute you.";
+      const extras2e = [
           ["THAC0", "20"],
+          ["Initiative", "d10, low wins" + (dex.react ? " (Reaction Adj. " + fmtMod(dex.react) + ")" : "")],
+          ["Melee Attack Adj.", fmtMod(str.hit) + " to hit, " + fmtMod(str.dmg) + " damage"],
+          ["Missile Attack Adj.", fmtMod(dex.missile)],
           ["Max Press", str.press + " lbs"],
           ["Open Doors", str.doors + "-in-20"],
           ["Bend Bars / Lift Gates", str.bars + "%"],
           ["Weight Allowance", str.allow + " lbs"],
           ["System Shock", con.shock + "% (chance to survive being polymorphed)"],
-          ["Reaction Adj.", fmtMod(dex.react)],
-        ],
+          ["Movement", "12"],
+          ["Save vs. Para/Poison/Death", sv[0] + " (d20, meet or beat)"],
+          ["Save vs. Rod/Staff/Wand", sv[1]],
+          ["Save vs. Petrify/Polymorph", sv[2]],
+          ["Save vs. Breath Weapon", sv[3]],
+          ["Save vs. Spell", sv[4]],
+          ["Class Legality", legality],
+      ];
+      if (a.str === 18 && isWarrior) {
+        extras2e.splice(5, 0, ["Exceptional Strength", "Roll d100 and start bragging"]);
+      }
+      return {
+        mods: null, // 2e has no universal modifier; the tables ARE the character
+        hp: Math.max(1, avgHp + conHp),
+        hpNote: "average roll — the coward's option",
+        ac: 10 + dex.def,
+        acNote: "descending — lower is better",
+        weapons: "Fists (1d2" + (str.dmg ? fmtMod(str.dmg) : "") + ", punching chart, mostly temporary)",
+        extras: extras2e,
       };
     },
   },
@@ -500,17 +587,36 @@ const SYSTEMS = {
       bard: "Bard", rogue: "Rogue", ranger: "Ranger",
     },
     classHp: { fighter: 10, wizard: 6, cleric: 8, bard: 8, rogue: 8, ranger: 10 },
+    skillsNote: "Treat as trained (+3 + ability mod).",
+    featsTitle: "Feats",
+    featNote: "Translation for PF2e: advantage = roll twice, keep better; bonus action = one action (◆).",
     derive(a, archetype) {
       const con = mod5e(a.con);
+      const str = mod5e(a.str);
+      const perception = mod5e(a.wis) + PF2E_PROF[PF2E_PERCEPTION[archetype]];
+      const [fort, ref, will] = PF2E_SAVES[archetype];
+      // PF2e Ranger's key attribute is Str or Dex (never Con — that's only
+      // our internal tie-break whimsy). Take the better of the two.
+      const keyMod =
+        archetype === "ranger"
+          ? Math.max(mod5e(a.str), mod5e(a.dex))
+          : mod5e(a[ARCHETYPES[archetype].key]);
       return {
         mods: Object.fromEntries(ABILITIES.map((k) => [k, fmtMod(mod5e(a[k]))])),
         hp: Math.max(1, 8 + this.classHp[archetype] + con), // human ancestry + class
-        ac: 10 + mod5e(a.dex),
-        acNote: "unarmored, untrained",
+        hpNote: "8 ancestry + class HP",
+        ac: 13 + mod5e(a.dex), // 10 + dex + trained unarmored (+2 prof +1 level)
+        acNote: "unarmored, trained",
+        weapons: "Fists (" + fmtMod(3 + str) + " to hit, 1d4" + (str ? fmtMod(str) : "") + " nonlethal; agile, finesse)",
         extras: [
-          ["Perception", fmtMod(mod5e(a.wis) + 3) + " (trained)"],
-          ["Class DC", 10 + 3 + mod5e(a[ARCHETYPES[archetype].key]) + ""],
+          ["Perception", fmtMod(perception) + " (" + (PF2E_PERCEPTION[archetype] === "E" ? "expert" : "trained") + " — also your initiative)"],
+          ["Fortitude", fmtMod(con + PF2E_PROF[fort])],
+          ["Reflex", fmtMod(mod5e(a.dex) + PF2E_PROF[ref])],
+          ["Will", fmtMod(mod5e(a.wis) + PF2E_PROF[will])],
+          ["Class DC", String(13 + keyMod)],
+          ["Speed", "25 ft"],
           ["Ancestry", "Human (Versatile Heritage: Tired)"],
+          ["Edicts / Anathema", "Coffee / Mornings"],
           ["Hero Points", "1"],
         ],
       };

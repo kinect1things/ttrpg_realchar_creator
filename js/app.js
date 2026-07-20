@@ -54,11 +54,11 @@
       if (q.axis === "law") law = q.options[idx].value;
       else good = q.options[idx].value;
     }
-    const alignment =
-      law === "N" && good === "N"
-        ? "True Neutral"
-        : ALIGNMENT_NAMES[law] + " " + ALIGNMENT_NAMES[good];
-    const alignShort = law + good;
+    const trueNeutral = law === "N" && good === "N";
+    const alignment = trueNeutral
+      ? "True Neutral"
+      : ALIGNMENT_NAMES[law] + " " + ALIGNMENT_NAMES[good];
+    const alignShort = trueNeutral ? "TN" : law + good;
 
     // Skills
     const skillsQ = QUESTIONS.find((q) => q.type === "skills");
@@ -86,10 +86,15 @@
   // Rendering helpers
   // ------------------------------------------------------------------
 
+  // Escapes for BOTH element and attribute context — user input lands in
+  // value="..." attributes, so quotes must be encoded too.
   function esc(s) {
-    const d = document.createElement("div");
-    d.textContent = s;
-    return d.innerHTML;
+    return String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
   }
 
   function render() {
@@ -152,7 +157,7 @@
   function renderQuestion(q) {
     const n = state.step + 1;
     const total = QUESTIONS.length;
-    const pct = Math.round((state.step / total) * 100);
+    const pct = Math.round((n / total) * 100);
     const multi = !!q.multi;
     const current = state.answers[q.id];
 
@@ -248,7 +253,7 @@
           </div>
 
           <div class="combat-row">
-            <div class="combat-box"><span class="combat-num">${derived.hp}</span><span class="combat-label">HP</span></div>
+            <div class="combat-box"><span class="combat-num">${derived.hp}</span><span class="combat-label">HP<small> (${esc(derived.hpNote || "")})</small></span></div>
             <div class="combat-box"><span class="combat-num">${derived.ac}</span><span class="combat-label">AC<small> (${esc(derived.acNote)})</small></span></div>
           </div>
 
@@ -264,16 +269,18 @@
           <div class="sheet-section">
             <h3>Skills</h3>
             <p>${c.skills.map(esc).join(", ")}</p>
+            ${sys.skillsNote ? `<p class="sheet-note">${esc(sys.skillsNote)}</p>` : ""}
           </div>
 
           <div class="sheet-section">
             <h3>Equipment</h3>
-            <p>Armor: None &nbsp;·&nbsp; Weapons: Fists (1 bludgeoning, nonlethal, mostly to yourself)</p>
+            <p>Armor: None &nbsp;·&nbsp; Weapons: ${esc(derived.weapons)}</p>
           </div>
 
           <div class="sheet-section">
-            <h3>Feats</h3>
+            <h3>${esc(sys.featsTitle || "Feats")}</h3>
             ${c.feats.map((f) => `<p><strong>${esc(f.name)}</strong> — ${esc(f.desc)}</p>`).join("")}
+            ${sys.featNote ? `<p class="sheet-note">${esc(sys.featNote)}</p>` : ""}
           </div>
         </div>
 
@@ -289,12 +296,16 @@
           </div>
           <div class="nav">
             <button id="copy-btn" class="primary">Copy for chat</button>
+            <button id="link-btn" class="ghost">Copy link</button>
             <button id="print-btn" class="ghost">Print</button>
             <button id="restart-btn" class="ghost">Start over</button>
           </div>
-          <p id="copy-done" class="fine-print" hidden>Copied — go make your friends feel things.</p>
+          <p id="copy-done" class="fine-print" hidden></p>
         </div>
       </div>`;
+
+    // Keep a shareable permalink in the URL bar while on the results screen.
+    history.replaceState(null, "", "#" + encodeShare());
 
     app.querySelectorAll(".system-switch .chip").forEach((btn) =>
       btn.addEventListener("click", () => {
@@ -303,18 +314,67 @@
       })
     );
     document.getElementById("copy-btn").addEventListener("click", () => {
-      copyText(chatText(c, name));
-      const done = document.getElementById("copy-done");
-      done.hidden = false;
-      setTimeout(() => (done.hidden = true), 3000);
+      copyText(chatText(c, name), "Copied — go make your friends feel things.");
+    });
+    document.getElementById("link-btn").addEventListener("click", () => {
+      const url = location.origin + location.pathname + "#" + encodeShare();
+      copyText(url, "Link copied — anyone who opens it sees this exact sheet.");
     });
     document.getElementById("print-btn").addEventListener("click", () => window.print());
     document.getElementById("restart-btn").addEventListener("click", () => {
       state.step = -1;
       state.answers = {};
       state.otherSkills = "";
+      history.replaceState(null, "", location.pathname);
       render();
     });
+  }
+
+  // ------------------------------------------------------------------
+  // Shareable links: quiz answers packed into the URL hash. All state is
+  // client-side; opening a shared link recomputes the sheet locally.
+  // ------------------------------------------------------------------
+
+  function encodeShare() {
+    const payload = JSON.stringify({
+      n: state.name,
+      s: state.system,
+      a: state.answers,
+      o: state.otherSkills,
+    });
+    return btoa(String.fromCharCode(...new TextEncoder().encode(payload)))
+      .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  }
+
+  // Strictly validates untrusted hash data: unknown systems, question ids, or
+  // out-of-range option indices are rejected wholesale.
+  function decodeShare(hash) {
+    try {
+      const b64 = hash.replace(/-/g, "+").replace(/_/g, "/");
+      const bytes = Uint8Array.from(atob(b64), (ch) => ch.charCodeAt(0));
+      const p = JSON.parse(new TextDecoder().decode(bytes));
+      if (!SYSTEMS[p.s] || typeof p.a !== "object" || p.a === null) return null;
+      const answers = {};
+      for (const [id, v] of Object.entries(p.a)) {
+        const q = QUESTIONS.find((x) => x.id === id);
+        if (!q) return null;
+        const okIndex = (i) => Number.isInteger(i) && i >= 0 && i < q.options.length;
+        if (q.multi) {
+          if (!Array.isArray(v) || !v.every(okIndex)) return null;
+        } else if (!okIndex(v)) {
+          return null;
+        }
+        answers[id] = v;
+      }
+      return {
+        name: String(p.n || "").slice(0, 40),
+        system: p.s,
+        answers,
+        otherSkills: String(p.o || "").slice(0, 200),
+      };
+    } catch (e) {
+      return null;
+    }
   }
 
   // Plain-text sheet in the style of the original group-chat post.
@@ -331,28 +391,50 @@
       lines.push(`${ABILITY_NAMES[ab].slice(0, 3)}: ${c.abilities[ab]}${mod}`);
     }
     lines.push("Skills:", c.skills.join(", "));
-    lines.push("Armor: None", "Weapons: fists");
-    lines.push("Feats: " + c.feats.map((f) => `${f.name} - ${f.desc}`).join(" | "));
+    lines.push("Armor: None", "Weapons: " + d.weapons);
+    lines.push("Feats:");
+    for (const f of c.feats) lines.push(`${f.name} - ${f.desc}`);
     for (const [k, v] of d.extras) lines.push(`${k}: ${v}`);
     return lines.join("\n");
   }
 
-  function copyText(text) {
-    if (navigator.clipboard && window.isSecureContext) {
-      navigator.clipboard.writeText(text);
-    } else {
+  function copyText(text, doneMessage) {
+    const showToast = (msg) => {
+      const done = document.getElementById("copy-done");
+      if (!done) return;
+      done.textContent = msg;
+      done.hidden = false;
+      setTimeout(() => (done.hidden = true), 3000);
+    };
+    const fallback = () => {
       const ta = document.createElement("textarea");
       ta.value = text;
       document.body.appendChild(ta);
       ta.select();
-      document.execCommand("copy");
+      const ok = document.execCommand("copy");
       ta.remove();
+      showToast(ok ? doneMessage : "Couldn't copy — select the sheet and copy manually.");
+    };
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(() => showToast(doneMessage), fallback);
+    } else {
+      fallback();
     }
   }
 
   const versionEl = document.getElementById("app-version");
   if (versionEl && typeof APP_VERSION !== "undefined") {
     versionEl.textContent = "v" + APP_VERSION;
+  }
+
+  // A shared link drops you straight onto that character's sheet.
+  const shared = location.hash.length > 1 ? decodeShare(location.hash.slice(1)) : null;
+  if (shared) {
+    state.name = shared.name;
+    state.system = shared.system;
+    state.answers = shared.answers;
+    state.otherSkills = shared.otherSkills;
+    state.step = QUESTIONS.length;
   }
 
   render();
