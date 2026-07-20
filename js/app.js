@@ -163,7 +163,7 @@
 
     app.innerHTML = `
       <div class="card">
-        <div class="progress"><div class="progress-bar" style="width:${pct}%"></div></div>
+        <div class="progress"><div class="progress-bar"></div></div>
         <p class="q-count">Question ${n} of ${total}</p>
         <h2 class="q-text">${esc(q.text)}</h2>
         ${q.note ? `<p class="q-note">${esc(q.note)}</p>` : ""}
@@ -190,6 +190,10 @@
           ${multi ? `<button id="next-btn" class="primary">Continue →</button>` : ""}
         </div>
       </div>`;
+
+    // Width set via CSSOM, not a style attribute — the CSP (style-src 'self')
+    // blocks inline style attributes but allows script-driven styling.
+    app.querySelector(".progress-bar").style.width = pct + "%";
 
     app.querySelectorAll(".option").forEach((btn) =>
       btn.addEventListener("click", () => {
