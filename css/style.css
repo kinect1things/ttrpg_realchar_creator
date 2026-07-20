@@ -1,0 +1,264 @@
+/* --------------------------------------------------------------------------
+   Real Character Creator — modern dark slate UI, clean white sheet.
+   -------------------------------------------------------------------------- */
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #10141a;
+  --bg-card: #1a212b;
+  --bg-inset: #12171f;
+  --border: #2c3644;
+  --ink: #e2e8f0;
+  --ink-dim: #8b98a9;
+  --accent: #d64545;
+  --accent-bright: #e05e5e;
+  --sheet-bg: #fafbfc;
+  --sheet-ink: #202836;
+  --sheet-dim: #64748b;
+  --sheet-line: #d7dde6;
+}
+
+body {
+  background: var(--bg);
+  background-image: radial-gradient(ellipse at 50% -20%, #1c2430 0%, var(--bg) 60%);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.4;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem;
+}
+
+#app { width: 100%; max-width: 680px; }
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+}
+
+/* ----- Start screen ----- */
+
+.title {
+  font-size: 2.3rem;
+  text-align: center;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  margin-bottom: 0.75rem;
+}
+
+.tagline {
+  text-align: center;
+  color: var(--ink-dim);
+  line-height: 1.55;
+  margin-bottom: 2rem;
+}
+.tagline em { color: var(--accent-bright); font-style: normal; font-weight: 600; }
+
+.field-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-dim);
+  margin: 1.25rem 0 0.5rem;
+}
+
+input[type="text"] {
+  width: 100%;
+  background: var(--bg-inset);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--ink);
+  font: inherit;
+  padding: 0.7rem 0.9rem;
+}
+input[type="text"]:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+
+.system-grid { display: grid; grid-template-columns: 1fr; gap: 0.6rem; }
+@media (min-width: 560px) { .system-grid { grid-template-columns: repeat(3, 1fr); } }
+
+.system-card {
+  background: var(--bg-inset);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+  padding: 0.9rem;
+  text-align: left;
+  transition: border-color 0.15s, transform 0.1s;
+}
+.system-card:hover { border-color: var(--ink-dim); transform: translateY(-1px); }
+.system-card.selected { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); background: #221b1f; }
+.system-name { display: block; font-weight: 600; margin-bottom: 0.3rem; }
+.system-blurb { display: block; font-size: 0.8rem; color: var(--ink-dim); line-height: 1.4; }
+
+button.primary {
+  display: block;
+  width: 100%;
+  margin-top: 1.75rem;
+  background: var(--accent);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 1.05rem;
+  font-weight: 600;
+  padding: 0.85rem;
+  transition: background 0.15s, transform 0.1s;
+}
+button.primary:hover { background: var(--accent-bright); transform: translateY(-1px); }
+
+button.ghost {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--ink-dim);
+  cursor: pointer;
+  font: inherit;
+  padding: 0.7rem 1.2rem;
+}
+button.ghost:hover { border-color: var(--ink-dim); color: var(--ink); }
+
+.fine-print { text-align: center; color: var(--ink-dim); font-size: 0.8rem; margin-top: 1rem; }
+
+/* ----- Questions ----- */
+
+.progress {
+  height: 6px;
+  background: var(--bg-inset);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+.progress-bar { height: 100%; background: var(--accent); transition: width 0.3s; }
+
+.q-count { font-size: 0.75rem; font-weight: 600; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.75rem; }
+.q-text { font-size: 1.3rem; line-height: 1.35; margin-bottom: 0.5rem; font-weight: 600; }
+.q-note { color: var(--ink-dim); font-style: italic; font-size: 0.9rem; margin-bottom: 0.5rem; }
+
+.options { display: flex; flex-direction: column; gap: 0.55rem; margin-top: 1.25rem; }
+
+.option {
+  background: var(--bg-inset);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--ink);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font: inherit;
+  font-size: 0.98rem;
+  padding: 0.85rem 1rem;
+  text-align: left;
+  transition: border-color 0.15s, background 0.15s, transform 0.1s;
+}
+.option:hover { border-color: var(--ink-dim); background: #1d2530; transform: translateX(3px); }
+.option.selected { border-color: var(--accent); background: #221b1f; }
+
+.checkbox {
+  flex: 0 0 auto;
+  width: 1.15rem;
+  height: 1.15rem;
+  border: 1px solid var(--ink-dim);
+  border-radius: 5px;
+  color: var(--accent-bright);
+  font-size: 0.8rem;
+  line-height: 1.05rem;
+  text-align: center;
+}
+.option.selected .checkbox { border-color: var(--accent); }
+
+.other-input { margin-top: 0.9rem; }
+
+.nav { display: flex; gap: 0.75rem; margin-top: 1.5rem; align-items: center; }
+.nav .primary { margin-top: 0; width: auto; flex: 1; padding: 0.7rem 1.2rem; font-size: 1rem; }
+
+/* ----- Character sheet ----- */
+
+.results { padding: 1.25rem; }
+
+.sheet {
+  background: var(--sheet-bg);
+  border: 1px solid var(--sheet-line);
+  border-radius: 8px;
+  color: var(--sheet-ink);
+  font-family: Georgia, "Times New Roman", serif;
+  padding: 1.75rem;
+}
+
+.sheet-header { text-align: center; border-bottom: 3px double var(--sheet-line); padding-bottom: 0.9rem; margin-bottom: 1.1rem; }
+.char-name { font-size: 1.9rem; color: var(--accent); letter-spacing: 0.01em; }
+.char-sub { color: var(--sheet-dim); font-size: 0.95rem; margin-top: 0.25rem; }
+
+.combat-row { display: flex; gap: 0.75rem; justify-content: center; margin-bottom: 1.1rem; }
+.combat-box {
+  border: 2px solid var(--sheet-ink);
+  border-radius: 10px;
+  min-width: 110px;
+  padding: 0.5rem 1rem;
+  text-align: center;
+}
+.combat-num { display: block; font-size: 1.8rem; font-weight: bold; }
+.combat-label { display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--sheet-dim); }
+.combat-label small { display: block; text-transform: none; letter-spacing: 0; }
+
+.stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; margin-bottom: 1.1rem; }
+@media (max-width: 480px) { .stat-grid { grid-template-columns: repeat(2, 1fr); } }
+
+.stat {
+  border: 1px solid var(--sheet-line);
+  border-radius: 8px;
+  padding: 0.5rem;
+  text-align: center;
+}
+.stat-name { display: block; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--sheet-dim); }
+.stat-score { display: block; font-size: 1.6rem; font-weight: bold; }
+.mod { display: block; font-size: 0.9rem; color: var(--accent); font-weight: bold; }
+
+.sheet-section { border-top: 1px solid var(--sheet-line); padding-top: 0.8rem; margin-top: 0.8rem; }
+.sheet-section h3 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); margin-bottom: 0.4rem; }
+.sheet-section p { line-height: 1.5; font-size: 0.95rem; }
+.sheet-section p + p { margin-top: 0.4rem; }
+
+.extras { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+.extras td { padding: 0.22rem 0; vertical-align: top; }
+.extras td:first-child { color: var(--sheet-dim); width: 45%; }
+
+/* ----- Result actions ----- */
+
+.result-actions { margin-top: 1.25rem; }
+.system-switch { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.chip {
+  background: var(--bg-inset);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.88rem;
+  padding: 0.45rem 1rem;
+}
+.chip:hover { border-color: var(--ink-dim); }
+.chip.selected { border-color: var(--accent); background: #221b1f; color: var(--accent-bright); }
+
+.site-footer { color: var(--ink-dim); font-size: 0.8rem; margin-top: 2rem; text-align: center; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+.site-footer a { color: var(--accent-bright); }
+
+/* ----- Print: just the sheet ----- */
+
+@media print {
+  body { background: #fff; padding: 0; }
+  .site-footer, .result-actions, .progress { display: none !important; }
+  .card { background: none; border: none; box-shadow: none; padding: 0; }
+  .sheet { border: 1px solid #999; }
+}
