@@ -26,11 +26,11 @@ function check(cond, msg) {
 // Top-level const/let in a VM script bind to the context's lexical scope,
 // not the sandbox object, so pull them out with an in-context expression.
 const {
-  APP_VERSION, ABILITIES, ABILITY_NAMES, QUESTIONS, ARCHETYPES,
+  APP_VERSION, ABILITIES, ABILITY_NAMES, ABILITY_CAP, QUESTIONS, ARCHETYPES,
   ALIGNMENT_NAMES, FEATS, FALLBACK_FEAT, SYSTEMS,
   STR_TABLE_2E, DEX_TABLE_2E, CON_TABLE_2E,
 } = vm.runInContext(
-  "({ APP_VERSION, ABILITIES, ABILITY_NAMES, QUESTIONS, ARCHETYPES, " +
+  "({ APP_VERSION, ABILITIES, ABILITY_NAMES, ABILITY_CAP, QUESTIONS, ARCHETYPES, " +
   "ALIGNMENT_NAMES, FEATS, FALLBACK_FEAT, SYSTEMS, " +
   "STR_TABLE_2E, DEX_TABLE_2E, CON_TABLE_2E })",
   ctx
@@ -128,13 +128,16 @@ for (const [sysId, sys] of Object.entries(SYSTEMS)) {
 }
 
 // ----- score reachability: the app's promises must be mathematically true -----
-// "18 is genius or Olympian" — someone who maxes every answer must get an 18.
+// House rule: no real human gets an 18 — the cap, not weak questions, must be
+// what stops you. All-max answers must clear the cap (so top rungs matter and
+// the "quiz didn't believe you" note actually fires), and the cap must be 17.
+check(ABILITY_CAP === 17, `ABILITY_CAP is ${ABILITY_CAP}, expected 17`);
 for (const ab of ABILITIES) {
   const qs = QUESTIONS.filter((q) => q.type === "ability" && q.ability === ab);
   const maxAvg = qs.reduce((s, q) => s + Math.max(...q.options.map((o) => o.score)), 0) / qs.length;
   check(
-    Math.round(maxAvg) >= 18,
-    `ability ${ab}: all-max answers average ${maxAvg.toFixed(2)} — an 18 is unreachable`
+    Math.round(maxAvg) >= ABILITY_CAP,
+    `ability ${ab}: all-max answers average ${maxAvg.toFixed(2)} — the cap never binds; a ${ABILITY_CAP} is unreachable`
   );
   const minAvg = qs.reduce((s, q) => s + Math.min(...q.options.map((o) => o.score)), 0) / qs.length;
   check(

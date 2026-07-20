@@ -21,14 +21,18 @@
   // ------------------------------------------------------------------
 
   function computeCharacter() {
-    // Abilities: rounded average of each ability's answered questions.
+    // Abilities: rounded average of each ability's answered questions,
+    // capped at ABILITY_CAP — no real human gets an 18.
     const abilities = {};
+    let capped = false;
     for (const ab of ABILITIES) {
       const scores = QUESTIONS.filter((q) => q.type === "ability" && q.ability === ab)
         .map((q) => (state.answers[q.id] != null ? q.options[state.answers[q.id]].score : null))
         .filter((s) => s != null);
       const avg = scores.length ? scores.reduce((a, b) => a + b, 0) / scores.length : 10;
-      abilities[ab] = Math.min(18, Math.max(3, Math.round(avg)));
+      const raw = Math.max(3, Math.round(avg));
+      if (raw > ABILITY_CAP) capped = true;
+      abilities[ab] = Math.min(ABILITY_CAP, raw);
     }
 
     // Class: tally votes, break ties by the archetype's key ability.
@@ -79,7 +83,7 @@
     let feats = FEATS.filter((f) => f.when(abilities)).slice(0, 3);
     if (!feats.length) feats = [FALLBACK_FEAT];
 
-    return { abilities, archetype, alignment, alignShort, skills, feats };
+    return { abilities, archetype, alignment, alignShort, skills, feats, capped };
   }
 
   // ------------------------------------------------------------------
@@ -133,7 +137,7 @@
         </div>
 
         <button id="start-btn" class="primary">Roll for Reality</button>
-        <p class="fine-print">18 questions · ~2 minutes · no stat above what you deserve</p>
+        <p class="fine-print">18 questions · ~2 minutes · capped at 17 — no real human gets an 18</p>
       </div>`;
 
     app.querySelectorAll(".system-card").forEach((btn) =>
@@ -262,6 +266,7 @@
           </div>
 
           <div class="stat-grid">${abilityRows}</div>
+          ${c.capped ? `<p class="sheet-note cap-note">* An 18 was on the table. The quiz didn't believe you. No real human gets an 18.</p>` : ""}
 
           <div class="sheet-section">
             <h3>Details</h3>
@@ -394,6 +399,7 @@
       const mod = d.mods ? ` (${d.mods[ab]})` : "";
       lines.push(`${ABILITY_NAMES[ab].slice(0, 3)}: ${c.abilities[ab]}${mod}`);
     }
+    if (c.capped) lines.push("(The quiz withheld an 18. No real human gets an 18.)");
     lines.push("Skills:", c.skills.join(", "));
     lines.push("Armor: None", "Weapons: " + d.weapons);
     lines.push("Feats:");
